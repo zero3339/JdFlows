@@ -1,0 +1,14 @@
+{
+  "database": {
+    "url": "sqlite:///data/jdflows.db",
+    "echo": false,
+    "pool_size": 5
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/jdflows.log",
+    "rotation": "100 MB",
+    "retention": "30 days",
+    "compression": "zip"
+  }
+}

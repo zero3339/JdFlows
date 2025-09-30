@@ -1,0 +1,14 @@
+{
+  "app": {
+    "name": "JDFlows",
+    "version": "0.1.0",
+    "debug": false
+  },
+  "window": {
+    "title": "JDFlows - 京东商品采集系统",
+    "width": 1280,
+    "height": 800,
+    "min_width": 1024,
+    "min_height": 600
+  }
+}
