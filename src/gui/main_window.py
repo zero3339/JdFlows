@@ -21,6 +21,8 @@ from loguru import logger
 
 from src.gui.style_manager import StyleManager, Theme
 from src.core.config import WindowConfig
+from src.core.config_manager import ConfigManager
+from src.gui.dialogs.settings_dialog import SettingsDialog
 
 
 class MainWindow(QMainWindow):
@@ -34,6 +36,7 @@ class MainWindow(QMainWindow):
         self,
         config: Optional[WindowConfig] = None,
         style_manager: Optional[StyleManager] = None,
+        config_manager: Optional[ConfigManager] = None,
     ) -> None:
         """
         Initialize the main window.
@@ -41,11 +44,13 @@ class MainWindow(QMainWindow):
         Args:
             config: Window configuration.
             style_manager: Style manager instance.
+            config_manager: Configuration manager instance.
         """
         super().__init__()
 
         self.config = config or WindowConfig()
         self.style_manager = style_manager or StyleManager()
+        self.config_manager = config_manager
 
         # Setup window
         self._setup_window()
@@ -215,6 +220,27 @@ class MainWindow(QMainWindow):
 
     def _on_open_settings(self) -> None:
         """Handle settings button."""
-        # Placeholder - will be implemented in later tasks
-        self.update_status("设置对话框 - 待实现")
-        logger.info("Settings dialog requested")
+        if not self.config_manager:
+            self.update_status("配置管理器不可用")
+            logger.warning("Config manager not available")
+            return
+
+        try:
+            dialog = SettingsDialog(self.config_manager, parent=self)
+            dialog.settings_saved.connect(self._on_settings_saved)
+
+            if dialog.exec():
+                self.update_status("设置已保存")
+                logger.info("Settings dialog accepted")
+            else:
+                self.update_status("设置未更改")
+                logger.info("Settings dialog canceled")
+
+        except Exception as e:
+            self.update_status(f"打开设置失败: {e}")
+            logger.error(f"Failed to open settings dialog: {e}")
+
+    def _on_settings_saved(self) -> None:
+        """Handle settings saved signal."""
+        logger.info("Settings saved, may need to restart for some changes to take effect")
+        self.update_status("设置已保存 (部分设置需要重启)")
