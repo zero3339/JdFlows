@@ -15,6 +15,7 @@ from .config_manager import ConfigManager
 from .logger import setup_logger
 from .exception_handler import install_exception_handler, ExceptionHandler
 from .exceptions import JDFlowsException
+from .state_manager import StateManager
 
 
 class ApplicationState(Enum):
@@ -81,6 +82,10 @@ class ApplicationCore:
             # Install signal handlers
             self._install_signal_handlers()
             logger.info("Signal handlers installed")
+
+            # Initialize state manager
+            self.state_manager = StateManager()
+            logger.info("State manager initialized")
 
             self.state = ApplicationState.READY
             logger.info(f"{self.app_name} core initialized successfully")
