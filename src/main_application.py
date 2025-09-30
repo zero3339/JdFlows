@@ -3,7 +3,7 @@ Main Application
 
 JDFlows main application class with PyQt6 integration.
 """
-from typing import Optional, Any
+from typing import Optional
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QTimer
@@ -12,6 +12,8 @@ from loguru import logger
 from src.core.application_core import ApplicationCore, ApplicationState
 from src.core.config_manager import ConfigManager
 from src.core.exceptions import JDFlowsException, GUIError
+from src.gui.main_window import MainWindow
+from src.gui.style_manager import StyleManager, Theme
 
 
 class JDFlowsApplication:
@@ -29,7 +31,8 @@ class JDFlowsApplication:
         # Core components
         self.core = ApplicationCore(app_name="JDFlows")
         self.qt_app: Optional[QApplication] = None
-        self.main_window: Optional[Any] = None  # Will be set when GUI is implemented
+        self.main_window: Optional[MainWindow] = None
+        self.style_manager: Optional[StyleManager] = None
 
         # Timers
         self._shutdown_timer: Optional[QTimer] = None
@@ -77,7 +80,9 @@ class JDFlowsApplication:
                 logger.info("Starting Qt event loop...")
                 return self.qt_app.exec()
             else:
-                logger.warning("Qt application not initialized, running in headless mode")
+                logger.warning(
+                    "Qt application not initialized, running in headless mode"
+                )
                 return 0
 
         except Exception as e:
@@ -122,9 +127,22 @@ class JDFlowsApplication:
         """Callback executed on application startup."""
         logger.info("Application startup callback executed")
 
-        # Future: Initialize main window and other GUI components
-        # self.main_window = MainWindow(self)
-        # self.main_window.show()
+        # Initialize style manager
+        self.style_manager = StyleManager(app=self.qt_app)
+
+        # Initialize main window
+        if self.core.config_manager:
+            config = self.core.config_manager.get_config()
+            self.main_window = MainWindow(
+                config=config.window, style_manager=self.style_manager
+            )
+
+            # Apply initial theme
+            self.style_manager.set_theme(Theme.LIGHT)
+
+            # Show main window
+            self.main_window.show()
+            logger.info("Main window displayed")
 
     def _on_shutdown(self) -> None:
         """Callback executed on application shutdown."""
@@ -133,9 +151,10 @@ class JDFlowsApplication:
         # Cleanup Qt application
         if self.qt_app is not None:
             logger.info("Cleaning up Qt application...")
-            # Future: Close main window
-            # if self.main_window:
-            #     self.main_window.close()
+
+            # Close main window
+            if self.main_window:
+                self.main_window.close()
 
             # Quit Qt application
             self.qt_app.quit()
