@@ -1,0 +1,21 @@
+[project]
+name = "jdflows"
+version = "0.1.0"
+description = "京东商品采集系统 | Python + PyQt6 + Playwright"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "JDFlows Team"}]
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311']
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+fail_under = 85
