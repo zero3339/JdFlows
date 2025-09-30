@@ -80,9 +80,7 @@ class JDFlowsApplication:
                 logger.info("Starting Qt event loop...")
                 return self.qt_app.exec()
             else:
-                logger.warning(
-                    "Qt application not initialized, running in headless mode"
-                )
+                logger.warning("Qt application not initialized, running in headless mode")
                 return 0
 
         except Exception as e:
@@ -134,7 +132,9 @@ class JDFlowsApplication:
         if self.core.config_manager:
             config = self.core.config_manager.get_config()
             self.main_window = MainWindow(
-                config=config.window, style_manager=self.style_manager
+                config=config.window,
+                style_manager=self.style_manager,
+                config_manager=self.core.config_manager,
             )
 
             # Apply initial theme
