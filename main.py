@@ -4,15 +4,26 @@ JDFlows Application Entry Point
 This is the main entry point for the JDFlows application.
 """
 import sys
+from pathlib import Path
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from src.main_application import create_application  # noqa: E402
 
 
 def main() -> int:
     """Main application entry point."""
-    print("JDFlows v0.1.0")
-    print("京东商品采集系统")
-    print("\n项目初始化完成！")
-    print("下一步: 运行 'pip install -r requirements.txt' 安装依赖")
-    return 0
+    try:
+        # Create and initialize application
+        app = create_application(argv=sys.argv)
+
+        # Run application
+        return app.run()
+
+    except Exception as e:
+        print(f"Fatal error: {e}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
