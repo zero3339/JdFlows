@@ -84,3 +84,15 @@ class OperationTimeoutError(JDFlowsException):
     """Raised when an operation times out."""
 
     pass
+
+
+class DataError(JDFlowsException):
+    """Data processing error."""
+
+    pass
+
+
+class StateError(JDFlowsException):
+    """State management error."""
+
+    pass
